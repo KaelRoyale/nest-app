@@ -4,10 +4,34 @@ import { UsersController } from './users.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DatabaseModule } from 'src/database/database.module';
-import { UserSchema} from "./user.schema"
+import { User, UserSchema } from './user.schema';
+import * as bcrypt from "bcrypt";
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [
+    MongooseModule.forFeatureAsync([{
+      name: User.name,
+      useFactory: () => {
+        const schema = UserSchema;
+        schema.pre<User>('save', function (next) {
+          let user = this;
+    
+          // Generate a salt and use it to hash the user's password
+          bcrypt.genSalt(10, (err, salt) => {
+
+            if (err) return next(err);
+
+            bcrypt.hash(user.password, salt, (err, hash) => {
+              if (err) return next(err);
+              user.password = hash;
+              next();
+            });
+          });
+        });
+        return schema;
+      },
+    }
+    ])],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService]

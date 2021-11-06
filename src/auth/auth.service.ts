@@ -6,14 +6,14 @@ import { UsersService } from "../users/users.service";
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { User } from "../users/interface/user.interface"
+import { User, UserDocument } from "../users/user.schema"
 import { Model } from "mongoose"
 import * as bcrypt from "bcrypt"
 
 @Injectable()
 export class AuthService {
 
-    constructor(@InjectModel('User') private userModel: Model<User>, private usersService: UsersService, private jwtService: JwtService, private configService: ConfigService) {
+    constructor(@InjectModel(User.name) private userModel: Model<UserDocument>, private usersService: UsersService, private jwtService: JwtService, private configService: ConfigService) {
 
     }
 
@@ -35,7 +35,7 @@ export class AuthService {
     }
 
     async signIn(user: User) {
-        const payload = { username: user.username, sub: user._id };
+        const payload = { username: user.username };
         return {
             accessToken: this.jwtService.sign(payload),
         };
@@ -54,10 +54,17 @@ export class AuthService {
         const valid = await bcrypt.compare(password, user.password);
 
         if (valid) {
+            //Check if password match
+            //Reset failed count
+            user.failedAttemps = 0;
+            await user.save();
             return user;
         }
-
-        return null;
+        else {
+            // Check if not match password
+            user.failedAttemps++;
+            return null;
+        }
 
     }
 
@@ -77,7 +84,7 @@ export class AuthService {
     }
 
 
-    
+
 
     public getCookieWithJwtToken(username: string, email: string) {
         const payload: JwtPayload = { username };

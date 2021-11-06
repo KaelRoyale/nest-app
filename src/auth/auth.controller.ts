@@ -3,6 +3,8 @@ import {
     Controller,
     Post,
     Request,
+    Res,
+    HttpStatus,
     UseGuards,
     ValidationPipe,
   } from '@nestjs/common';
@@ -24,8 +26,12 @@ export class AuthController {
   
     @UseGuards(LocalAuthGuard)
     @Post('signin')
-    async signIn(@Request() req) {
-      return this.authService.signIn(req.user);
+    async signIn(@Res() res, @Request() req) {
+      const result = this.authService.signIn(req.user);
+      return res.status(HttpStatus.OK).json({
+        message: 'Successfully login',
+        result
+      });
     }
   
 }

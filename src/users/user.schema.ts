@@ -1,33 +1,23 @@
-import * as bcrypt from "bcrypt"
-import * as mongoose from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
+export type UserDocument = User & Document;
 
-export const UserSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    unique: true,
-  },
-  email: String,
-  password: String,
-  created: { type: Date, default: Date.now },
-  isActive: { type: Boolean, default: true},
-  failedAttemps: { type: Number, default: 0}
-});
+@Schema()
+export class User {
+  @Prop()
+  username: string;
 
-UserSchema.pre('save', function(next){
+  @Prop()
+  password: string;
 
-  let user = this;
-  // Make sure not to rehash the password if it is already hashed
-  if(!user.isModified('password')) return next();
-  // Generate a salt and use it to hash the user's password
-  bcrypt.genSalt(10, (err, salt) => {
+  @Prop({default: new Date().toISOString()})
+  createdAt: Date;
 
-      if(err) return next(err);
+  @Prop({default: 0})
+  failedAttemps: number;
 
-      bcrypt.hash(user.password, salt, (err, hash) => {
-          if(err) return next(err);
-          user.password = hash;
-          next();
-      });
-  });
-}); 
+  
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);

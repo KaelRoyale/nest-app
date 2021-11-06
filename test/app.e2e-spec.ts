@@ -5,11 +5,13 @@ import { AppModule } from './../src/app.module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let authService = { findAll: () => ['test'] };
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+    .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
