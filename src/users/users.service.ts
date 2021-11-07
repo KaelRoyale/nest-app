@@ -25,8 +25,8 @@ export class UsersService {
     return this.userModel.findById(query).exec();
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+     await this.userModel.findByIdAndUpdate(id, updateUserDto, {new: true})
   }
 
   remove(id: number) {
@@ -50,14 +50,14 @@ export class UsersService {
     if (user == null) {
       throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
     }
-    console.log("Start login");
+
     if (user.isLocked) {
       return null;
     }
     else {
       // compare passwords
       const areEqual = await bcrypt.compare(password, user.password);
-      console.log("Are equal pass? " + areEqual);
+ 
       if (!areEqual) {
 
         let currentAttempts = user.failedAttemps;
@@ -75,12 +75,12 @@ export class UsersService {
           let diffMins = Math.round(diffMs / 60000);
           if (diffMins > 5) //if last fail > 5 mins? update lastFailAttempts and number of fail
           {
-            console.log("fail but greater than 5 min")
+           
             user.lastFailedAttempts = new Date();
             currentAttempts = 1;
           }
           else {
-            console.log("increase current attempts")
+     
             currentAttempts++;
           }
         }
@@ -91,7 +91,7 @@ export class UsersService {
       }
 
       else {
-        console.log("Success login");
+       
         //Reset failed attempts field
         user.lastFailedAttempts = null;
         user.failedAttemps = 0;
