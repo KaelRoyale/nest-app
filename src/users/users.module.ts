@@ -4,7 +4,7 @@ import { UsersController } from './users.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DatabaseModule } from 'src/database/database.module';
-import { User, UserSchema } from './user.schema';
+import { User, UserDocument, UserSchema } from './user.schema';
 import * as bcrypt from "bcrypt";
 
 @Module({
@@ -13,9 +13,11 @@ import * as bcrypt from "bcrypt";
       name: User.name,
       useFactory: () => {
         const schema = UserSchema;
-        schema.pre<User>('save', function (next) {
+        schema.pre<UserDocument>('save', function (next) {
           let user = this;
-    
+          if (!this.isModified('password')) {
+            return next();
+          }
           // Generate a salt and use it to hash the user's password
           bcrypt.genSalt(10, (err, salt) => {
 

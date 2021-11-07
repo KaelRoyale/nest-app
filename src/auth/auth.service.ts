@@ -62,9 +62,10 @@ export class AuthService {
 
     async validateUser(username: string, password: string): Promise<User> {
 
+        console.log("Auth Validate");
         // This will be used for the initial login
         const user = await this.userModel.findOne({ username });
-
+        
         if (!user) {
             return null;
         }

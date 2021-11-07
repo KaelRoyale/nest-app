@@ -13,7 +13,8 @@ export class CreateUserDto {
     password: string;
     @ApiProperty()
     createdAt: string = new Date().toISOString();
-
+    @ApiProperty()
+    isLocked: boolean = false;
 }
 
 

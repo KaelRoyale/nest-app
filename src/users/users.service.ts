@@ -50,40 +50,51 @@ export class UsersService {
     if (user == null) {
       throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
     }
-
+    console.log("Start login");
     if (user.isLocked) {
       return null;
     }
     else {
       // compare passwords
       const areEqual = await bcrypt.compare(password, user.password);
-
+      console.log("Are equal pass? " + areEqual);
       if (!areEqual) {
+
         let currentAttempts = user.failedAttemps;
-        if (currentAttempts === 0)
+        if (currentAttempts === 0) {
+          //increase
+          currentAttempts++;
           user.lastFailedAttempts = new Date();
+        }
         else if (currentAttempts == MAX_ATTEMPTS) {
           user.isLocked = true;
         }
         else {
           let current = new Date();
           let diffMs = (current.getTime() - user.lastFailedAttempts.getTime());
-          let diffMins = Math.round(diffMs/ 60000);
+          let diffMins = Math.round(diffMs / 60000);
           if (diffMins > 5) //if last fail > 5 mins? update lastFailAttempts and number of fail
           {
-              user.lastFailedAttempts = new Date();
-              currentAttempts = 1;
+            console.log("fail but greater than 5 min")
+            user.lastFailedAttempts = new Date();
+            currentAttempts = 1;
           }
-          else{
+          else {
+            console.log("increase current attempts")
             currentAttempts++;
           }
         }
+
         user.failedAttemps = currentAttempts;
         user.save();
         return null;
       }
 
       else {
+        console.log("Success login");
+        //Reset failed attempts field
+        user.lastFailedAttempts = null;
+        user.failedAttemps = 0;
         user.lastLoginAt = new Date();
         user.save();
         return user;

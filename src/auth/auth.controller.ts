@@ -8,11 +8,14 @@ import {
   HttpStatus,
   UseGuards,
   ValidationPipe,
+  Param,
   NotFoundException,
+  SetMetadata,
 } from '@nestjs/common';
 import { AuthService } from "./auth.service"
 
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { UpdateUserInput } from './dto/create-user.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
@@ -22,7 +25,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private userService: UsersService) { }
   @Post('/signup')
   async signUp(
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto
@@ -60,5 +63,16 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   public async testAuth(@Req() req): Promise<JwtPayload> {
     return req.user;
+  }
+
+  @Post('unlock/:username')
+  @UseGuards(JwtAuthGuard)
+  @SetMetadata('roles', ['admin'])
+  public async unlockUser(@Param('username') accountUserName: string, @Body() body: UpdateUserInput) {
+    let user = this.userService.findOneByUsername(accountUserName);
+    if (user)
+    {
+
+    }
   }
 }
