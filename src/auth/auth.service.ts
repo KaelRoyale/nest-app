@@ -8,7 +8,9 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { User, UserDocument } from "../users/user.schema"
 import { Model } from "mongoose"
+import { LoginStatus } from './interfaces/login-status.interface';
 import * as bcrypt from "bcrypt"
+import { ok } from 'assert';
 
 @Injectable()
 export class AuthService {
@@ -20,9 +22,9 @@ export class AuthService {
     async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
         const { username, password } = authCredentialsDto;
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+      
 
-        const user = new this.userModel({ username, password: hashedPassword });
+        const user = new this.userModel({ username, password: password });
 
         try {
             await user.save();
@@ -34,12 +36,24 @@ export class AuthService {
         }
     }
 
-    async signIn(user: User) {
-        const payload = { username: user.username };
+    async login(loginUserDto: LoginUserDto): Promise<LoginStatus | null> {
+        // find user in db
+        const user = await this.usersService.findByLogin(loginUserDto);
+      
+        if (user == null)
+        {
+            return null;
+        }
+
+        // generate and sign token
+        const token = this.createJwtPayload(user);
+      
         return {
-            accessToken: this.jwtService.sign(payload),
+            username: user.username,
+            ...token,
         };
     }
+
 
 
     async validateUser(username: string, password: string): Promise<User> {
@@ -68,17 +82,17 @@ export class AuthService {
 
     }
 
-    createJwtPayload(user) {
+    private createJwtPayload({username} : User): any {
 
         let data: JwtPayload = {
-            username: user.username
+            username: username
         };
 
         let jwt = this.jwtService.sign(data);
 
         return {
-            expiresIn: 3600,
-            token: jwt
+            expiresIn: this.configService.get('JWT_EXPIRATION_TIME'),
+            accessToken: jwt
         }
 
     }

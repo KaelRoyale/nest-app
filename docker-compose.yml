@@ -1,11 +1,11 @@
-version: '3.9'
+version: '3.3'
 services:
   dev:
     container_name: server-dev
     image: server-dev:1.0.0
     build:
       context: .
-      target: development
+      
       dockerfile: ./Dockerfile
     command: npm run start:debug
     ports:
@@ -17,14 +17,14 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped
-    environment:
-      MONGO_URL: mongodb
+    environment: 
+      - MONGODB_CONNSTRING=${MONGO_URL}
   prod:
     container_name: server-prod
     image: server-prod:1.0.0
     build:
       context: .
-      target: production
+    
       dockerfile: ./Dockerfile
     command: npm run start:prod
     ports:
@@ -40,11 +40,10 @@ services:
     image: mongo:5.0.0
     container_name: server-mongodb
     environment:
-      - MONGO_INITDB_ROOT_USERNAME= ${MONGO_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD= ${MONGO_PASSWORD}
-      - MONGO_INITDB_DATABASE = ${MONGO_DATABASE}
-    volumes:
-      - mongodb-data:/data/db
+      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MONGO_INITDB_DATABASE: NestDB
+    
     networks:
       - server-network
     ports:
@@ -55,8 +54,6 @@ services:
       timeout: 10s
       retries: 3
     restart: unless-stopped
-volumes:
-  mongodb-data:
-    name: mongodb-data
+
 networks:
   server-network:
