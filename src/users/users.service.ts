@@ -45,10 +45,8 @@ export class UsersService {
   }
 
   async findByLogin({ username, password }: LoginUserDto): Promise<User | null> {
-    console.log(username);
     const user = await this.userModel.findOne({ "username": username }).exec();
 
-    console.log(user);
     if (user == null) {
       throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
     }
@@ -56,21 +54,41 @@ export class UsersService {
     if (user.isLocked) {
       return null;
     }
-    // compare passwords
-    const areEqual = await bcrypt.compare(password, user.password);
+    else {
+      // compare passwords
+      const areEqual = await bcrypt.compare(password, user.password);
 
-    if (!areEqual) {
-      let currentAttempts = user.failedAttemps;
-      currentAttempts++;
-      if (currentAttempts == MAX_ATTEMPTS) {
-        user.isLocked = true;
+      if (!areEqual) {
+        let currentAttempts = user.failedAttemps;
+        if (currentAttempts === 0)
+          user.lastFailedAttempts = new Date();
+        else if (currentAttempts == MAX_ATTEMPTS) {
+          user.isLocked = true;
+        }
+        else {
+          let current = new Date();
+          let diffMs = (current.getTime() - user.lastFailedAttempts.getTime());
+          let diffMins = Math.round(diffMs/ 60000);
+          if (diffMins > 5) //if last fail > 5 mins? update lastFailAttempts and number of fail
+          {
+              user.lastFailedAttempts = new Date();
+              currentAttempts = 1;
+          }
+          else{
+            currentAttempts++;
+          }
+        }
+        user.failedAttemps = currentAttempts;
+        user.save();
+        return null;
       }
-      user.failedAttemps = currentAttempts;
-      user.save();
-      return null;
-    }
 
-    return user;
+      else {
+        user.lastLoginAt = new Date();
+        user.save();
+        return user;
+      }
+    }
   }
 
 }

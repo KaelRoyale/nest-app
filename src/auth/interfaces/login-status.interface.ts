@@ -1,5 +1,6 @@
 export interface LoginStatus {
-    username: string;
-    accessToken: any;
-    expiresIn: any;
+    username?: string;
+    success: boolean;
+    accessToken?: any;
+    expiresIn?: any;
   }

@@ -16,6 +16,12 @@ export class User {
   @Prop({ default: new Date().toISOString() })
   createdAt: Date;
 
+  @Prop()
+  lastLoginAt: Date;
+
+  @Prop()
+  lastFailedAttempts: Date;
+  
   @Prop({ default: 0 })
   failedAttemps: number;
 

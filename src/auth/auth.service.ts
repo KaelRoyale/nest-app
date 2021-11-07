@@ -22,7 +22,7 @@ export class AuthService {
     async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
         const { username, password } = authCredentialsDto;
 
-      
+
 
         const user = new this.userModel({ username, password: password });
 
@@ -39,19 +39,23 @@ export class AuthService {
     async login(loginUserDto: LoginUserDto): Promise<LoginStatus | null> {
         // find user in db
         const user = await this.usersService.findByLogin(loginUserDto);
-      
-        if (user == null)
-        {
-            return null;
+
+        if (user == null) {
+            return {
+                success: false
+            };
         }
 
-        // generate and sign token
-        const token = this.createJwtPayload(user);
-      
-        return {
-            username: user.username,
-            ...token,
-        };
+        else {
+            // generate and sign token
+            const token = this.createJwtPayload(user);
+
+            return {
+                username: user.username,
+                success: true,
+                ...token,
+            };
+        }
     }
 
 
@@ -82,7 +86,7 @@ export class AuthService {
 
     }
 
-    private createJwtPayload({username} : User): any {
+    private createJwtPayload({ username }: User): any {
 
         let data: JwtPayload = {
             username: username

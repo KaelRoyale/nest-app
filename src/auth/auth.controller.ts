@@ -36,21 +36,22 @@ export class AuthController {
   async signIn(@Res() res, @Body() req: LoginUserDto) {
     const result = this.authService.login(req);
 
-
-    console.log(result);
-    if (result == null) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: "Oops! Something wrong with your login"
-      })
-    }
-    else {
-      result.then(value => {
+    
+      result.then((value) => {
+        if (value.success) 
         return res.status(HttpStatus.OK).json({
           message: 'Successfully login',
           value
         });
-      })
-    }
+      
+      else 
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+          message: "Oops! Something wrong with your login"
+        });
+      
+      });
+      
+    
 
   }
 
