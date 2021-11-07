@@ -1,73 +1,117 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# NestJS 7 API project 
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+[![License](https://img.shields.io/github/license/saluki/nestjs-template.svg)](https://github.com/saluki/nestjs-template/blob/master/LICENSE)
 
-## Description
+Scaffold quickly your next [NestJS](https://nestjs.com/) API project
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Crafted for Docker environments (Dockerfile support and environment variables)
+- REST API with [MongoDB](http://https://www.mongodb.com/) support 
+- Swagger documentation, [Joi](https://github.com/hapijs/joi) validation
+- Folder structure, code samples
 
-## Installation
+## 1. Getting started
 
-```bash
-$ npm install
+### 1.1 Requirements
+
+Before starting, make sure you have at least those components on your workstation:
+
+- An up-to-date release of [NodeJS](https://nodejs.org/) and NPM
+- A stable internet connection as it will try to connect to MongoDB Cloud Atlas
+
+[Docker](https://www.docker.com/) may also be useful for advanced testing and image building, although it is not required for development.
+
+### 1.2 Project configuration
+
+Start by cloning this project on your workstation.
+
+``` sh
+https://github.com/KaelRoyale/nest-app.git
 ```
 
-## Running the app
+The next thing will be to install all the dependencies of the project.
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```sh
+cd ./nest-app
+npm install
 ```
 
-## Test
+Once the dependencies are installed, you can now configure your project by creating a new `.env` file containing your environment variables used for development.
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```
+cp .env.example .env
+vi .env
 ```
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-## License
+Last but not least, define a `JWT_SECRET` to sign the JWT tokens or leave the default value in a development environment. Update the `JWT_ISSUER` to the correct value as set in the JWT. 
 
-Nest is [MIT licensed](LICENSE).
+
+
+> In this project, JWT is configured with secret and expires time in .env
+
+## 2. Project structure
+
+This template was made with a well-defined directory structure.
+
+```sh
+src/
+├── authen
+│   ├── guards
+│   ├── strategies
+│   ├── constants
+│   ├── dto
+│   ├── auth.module.ts
+│   ├── auth.service.ts
+│   ├── auth.controller.ts
+├── users
+│   ├── dto
+│   ├── users.schema
+│   ├── users.module.ts
+│   ├── users.service.ts
+│   ├── users.controller.ts
+
+
+└── main.ts
+├── app.module.ts
+```
+
+## 3. Default NPM commands
+
+The NPM commands below are already included with this template and can be used to quickly run, build and test your project.
+
+```sh
+# Start the application using the transpiled NodeJS
+npm run start
+
+# Run the application using "ts-node"
+npm run dev
+
+# Transpile the TypeScript files
+npm run build
+
+
+
+## 4. Project goals
+
+The goal of this project is to learning to buil RESTApi for authentication using NestJS Express
+
+## 5. Roadmap
+
+The following improvements are currently in progress : 
+
+- [x] Configuration validation
+- [x] Simple endpoints for authentication with JWT token
+- [x] Project documentation
+- [x] MongoDB migration support
+- [ ] Dockerfile improvements and better usage of environment variables
+- [ ] Conduct unit testing and integration testing
+- [ ] Better logging configuration with environment variables
+- [ ] Working further on refactoring code structures
+
+## 6. Contributing
+
+Feel free to suggest an improvement, report a bug, or ask something
