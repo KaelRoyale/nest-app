@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { User } from './user.schema';
 import { UsersService } from './users.service';
 import mockedUser from "../mocks/user.mock";
-import { getConnectionToken } from '@nestjs/mongoose';
+import { getConnectionToken, getModelToken } from '@nestjs/mongoose';
 
 let userData: User;
 
@@ -23,7 +23,7 @@ describe('UsersService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [UsersService,
         {
-          provide: getConnectionToken('User'),
+          provide: getModelToken('User'),
           useValue: usersRepository
         }],
     }).compile();
