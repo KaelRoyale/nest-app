@@ -9,22 +9,28 @@ import mockedConfigService from '../../mocks/config.service';
 import { AuthController } from '../auth.controller';
 import { ConflictException, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
-//import mockedUser from './user.mock';
+
 import { getConnectionToken } from '@nestjs/mongoose';
+
+const mockedUser: User = {
+
+    username: 'testUser',
+    password: 'testPass1234',
+    createdAt: new Date(),
+    failedAttemps: 0,
+    isLocked: false,
+    lastLoginAt: new Date(),
+    lastFailedAttempts: null
+}
 
 describe('The AuthenticationController', () => {
     let app: INestApplication;
     let userData: User;
     beforeEach(async () => {
-        const mockedUser: User = {
 
-            username: 'testUser',
-            password: 'testPass1234',
-            createdAt: new Date(),
-            failedAttemps: 0,
-            isLocked: false,
-            lastLoginAt: new Date(),
-            lastFailedAttempts: null
+
+        userData = {
+            ...mockedUser
         }
         const usersRepository = {
             create: jest.fn().mockResolvedValue(userData),
@@ -58,21 +64,39 @@ describe('The AuthenticationController', () => {
     describe('when sign in', () => {
         describe('successful', () => {
             it('should return a jwt token', () => {
-                
+
             })
         })
-       
-    })
-    describe('when registering with duplicated username', () => {
-        it('should throw an error', () => {
-            return request(app.getHttpServer())
-                .post('/auth/signup')
-                .send({
-                    username: "test6",
-                    password: "aaa"
 
-                })
-                .expect(ConflictException)
+    })
+    describe('when register', () => {
+        describe('and using valid data', () => {
+            it('should respond with the data of the user without the password', () => {
+                const expectedData = {
+                    ...userData
+                }
+                delete expectedData.password;
+                return request(app.getHttpServer())
+                    .post('/auth/signUp')
+                    .send({
+
+                        username: mockedUser.username,
+                        password: 'strongPassword'
+                    })
+                    .expect(201);
+            })
+        })
+        describe('when registering with duplicated username', () => {
+            it('should throw an error', () => {
+                return request(app.getHttpServer())
+                    .post('/auth/signup')
+                    .send({
+                        username: "test6",
+                        password: "aaa"
+
+                    })
+                    .expect(ConflictException)
+            })
         })
     })
 });

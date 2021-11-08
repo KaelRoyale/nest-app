@@ -19,15 +19,13 @@ export class AuthService {
 
     }
 
-    async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+    async signUp(authCredentialsDto: AuthCredentialsDto): Promise<User> {
         const { username, password } = authCredentialsDto;
-
-
-
         const user = new this.userModel({ username, password: password });
 
         try {
             await user.save();
+            return user;
         } catch (error) {
             if (error.code === 11000) {
                 throw new ConflictException('User already exists');

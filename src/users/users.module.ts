@@ -3,7 +3,6 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { DatabaseModule } from 'src/database/database.module';
 import { User, UserDocument, UserSchema } from './user.schema';
 import * as bcrypt from "bcrypt";
 

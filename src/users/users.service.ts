@@ -45,6 +45,7 @@ export class UsersService {
   }
 
   async findByLogin({ username, password }: LoginUserDto): Promise<User | null> {
+    console.log(username + " " + password);
     const user = await this.userModel.findOne({ "username": username }).exec();
 
     if (user == null) {

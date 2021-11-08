@@ -1,17 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { User } from './user.schema';
 import { UsersService } from './users.service';
+import mockedUser from "../mocks/user.mock";
+import { getConnectionToken } from '@nestjs/mongoose';
+
+let userData: User;
 
 describe('UsersService', () => {
   let service: UsersService;
 
-  const mockedUser = {
-    create: jest.fn().mockImplementation(dto => dto),
-    save: jest.fn().mockImplementation(user => Promise.resolve({ id: Date.now(), ...user }))
+  
+
+  userData = {
+    ...mockedUser
+  }
+  const usersRepository = {
+    create: jest.fn().mockResolvedValue(userData),
+    save: jest.fn().mockReturnValue(Promise.resolve())
   }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
+      providers: [UsersService,
+        {
+          provide: getConnectionToken('User'),
+          useValue: usersRepository
+        }],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
@@ -21,5 +35,5 @@ describe('UsersService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should ')
+
 });

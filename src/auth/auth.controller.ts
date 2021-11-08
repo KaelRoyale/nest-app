@@ -22,6 +22,7 @@ import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from "bcrypt";
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { User } from 'src/users/user.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -29,8 +30,9 @@ export class AuthController {
   @Post('/signup')
   async signUp(
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto
-  ): Promise<void> {
-    return await this.authService.signUp(authCredentialsDto);
+  ): Promise<User> {
+    let user  = await this.authService.signUp(authCredentialsDto);
+    return user;
   }
 
 
