@@ -84,6 +84,12 @@ src/
 The NPM commands below are already included with this template and can be used to quickly run, build and test your project.
 
 ```sh
+# To start the container
+docker-compose build
+docker-compose up dev
+
+
+
 # Start the application using the transpiled NodeJS
 npm run start
 
