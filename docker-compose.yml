@@ -16,6 +16,8 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+    env_file:
+      - .env
     restart: unless-stopped
     environment: 
       - MONGODB_CONNSTRING=${MONGO_URL}
