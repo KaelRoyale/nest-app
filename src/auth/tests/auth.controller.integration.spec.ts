@@ -2,7 +2,7 @@ import { AuthService } from '../auth.service';
 import { Test } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import {User} from '../../users/user.schema';
+import { User, UserSchema } from '../../users/user.schema';
 import { UsersService } from '../../users/users.service';
 import mockedJwtService from '../../mocks/jwt.service';
 import mockedConfigService from '../../mocks/config.service';
@@ -10,7 +10,7 @@ import { AuthController } from '../auth.controller';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import mockedUser from '../../mocks/user.mock';
-import { getModelToken } from '@nestjs/mongoose';
+import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 
 describe('The AuthenticationController', () => {
   let app: INestApplication;
@@ -23,8 +23,12 @@ describe('The AuthenticationController', () => {
       create: jest.fn().mockResolvedValue(userData),
       save: jest.fn().mockReturnValue(Promise.resolve())
     }
+   
 
     const module = await Test.createTestingModule({
+      imports:[
+     
+        MongooseModule.forFeature([{name: User.name, schema: UserSchema}])],
       controllers: [AuthController],
       providers: [
         UsersService,
