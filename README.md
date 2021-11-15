@@ -88,6 +88,8 @@ The NPM commands below are already included with this template and can be used t
 docker-compose build
 docker-compose up dev
 
+# The application is now running on
+http://localhost:3000/api/
 
 
 # Start the application using the transpiled NodeJS
